@@ -1,0 +1,31 @@
+﻿@model Panda_Exam.DTOS.Users.LoginUserDTO
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<main class="mt-3">
+    <h1 class="text-center text-torshia">Login</h1>
+    <hr class="bg-panda w-50 hr-2" />
+    <form class="mx-auto w-50" method="post" asp-action="Login">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="UserName" class="control-label" >Username</label>
+            <input type="text" class="form-control" asp-for="UserName" placeholder="Username..." required/>
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password" class="control-label"></label>
+            <input type="password" asp-for="Password" class="form-control" placeholder="Password..." required/>
+            <span  asp-validation-for="Password" class="text-danger"></span>
+
+        </div>
+        <div class="button-holder d-flex justify-content-center">
+            <button type="submit" class="btn bg-panda text-white">Login</button>
+        </div>
+    </form>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
