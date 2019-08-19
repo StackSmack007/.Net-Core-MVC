@@ -1,34 +1,31 @@
 ﻿namespace Panda_Exam.Controllers
 {
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Panda_Exam.Data;
     using Panda_Exam.DTOS.Receipts;
     using Panda_Exam.Models;
-    using System;
-    using System.Globalization;
     using System.Linq;
 
     public class ReceiptsController : Controller
     {
         private UserManager<User> userManager;
         private PandaDbContext DB;
-        public ReceiptsController(PandaDbContext db, UserManager<User> um)
+        private IMapper mapper;
+        public ReceiptsController(PandaDbContext db, UserManager<User> um, IMapper mapper)
         {
             DB = db;
             userManager = um;
+            this.mapper = mapper;
         }
 
-        public static void Create(Package package, PandaDbContext DB)
+        public static void Create(Package package, PandaDbContext DB, IMapper mapper)
         {
-            var receipt = new Receipt
-            {
-                Fee = package.Weight * 2.67m,
-                IssuedOn = DateTime.UtcNow,
-                RecipientId = package.UserId,
-                PackageId = package.Id,
-            };
+            var receipt = mapper.Map<Receipt>(package);
             DB.Receipts.Add(receipt);
             DB.SaveChanges();
         }
@@ -37,14 +34,10 @@
         public IActionResult Index()
         {
             var currentUserId = userManager.GetUserAsync(HttpContext.User).Result.Id;
-            var receipts = DB.Receipts.Where(x => x.RecipientId == currentUserId).Select(x => new outputReceiptIndexDto
-            {
-                Id = x.Id,
-                Fee = x.Fee,
-                IssuedOn = x.IssuedOn.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
-                Recipient = x.Recipient.UserName
-            }).ToArray();
 
+            var receipts = DB.Receipts.Where(x => x.RecipientId == currentUserId)
+                .ProjectTo<outputReceiptIndexDto>(mapper.ConfigurationProvider)
+                .ToArray();
             return View(receipts);
         }
 
@@ -52,16 +45,9 @@
         public IActionResult Details(int id)
         {
             var currentUserId = userManager.GetUserAsync(HttpContext.User).Result.Id;
-            var receipt = DB.Receipts.Where(x => x.RecipientId == currentUserId && x.Id == id).Select(x => new outputReceiptDetailsDto
-            {
-                Id=id,
-                Recepient = x.Recipient.UserName,
-                PackageWeight = x.Package.Weight,
-                PackageDescription = x.Package.Description,
-                DeliveryAddress = x.Package.ShippingAddress,
-                IssuedOn = x.IssuedOn.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
-                Fee = x.Fee
-            }).FirstOrDefault();
+            var receipt = mapper.Map<outputReceiptDetailsDto>(
+                                                             DB.Receipts.Where(x => x.RecipientId == currentUserId && x.Id == id)
+                                                             .Include(x=>x.Package).FirstOrDefault());
 
             if (receipt is null)
             {

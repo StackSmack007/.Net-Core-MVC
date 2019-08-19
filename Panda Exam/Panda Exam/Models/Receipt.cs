@@ -6,6 +6,11 @@
     using System.ComponentModel.DataAnnotations.Schema;
     public class Receipt : BaseEntity<int>
     {
+        public Receipt()
+        {
+            IssuedOn = DateTime.UtcNow;
+        }
+
         public decimal Fee { get; set; }
 
         public DateTime IssuedOn { get; set; }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda_Exam.Data;
@@ -6,7 +8,6 @@ using Panda_Exam.DTOS.Packages;
 using Panda_Exam.Models;
 using Panda_Exam.Models.Enums;
 using System;
-using System.Globalization;
 using System.Linq;
 
 namespace Panda_Exam.Controllers
@@ -16,10 +17,12 @@ namespace Panda_Exam.Controllers
     {
         private System.Random random;
         private PandaDbContext DB;
-        public PackagesController(System.Random random, PandaDbContext context)
+        private IMapper mapper;
+        public PackagesController(System.Random random, PandaDbContext context,IMapper mapper)
         {
             this.random = random;
             DB = context;
+            this.mapper = mapper;
         }
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
@@ -38,13 +41,7 @@ namespace Panda_Exam.Controllers
         [HttpPost]
         public IActionResult Create(inputPackageDto package)
         {
-            Package newPack = new Package
-            {
-                Description = package.Description,
-                Weight = package.Weight,
-                ShippingAddress = package.ShippingAddress,
-                UserId = package.UserId
-            };
+            Package newPack = mapper.Map<Package>(package);
 
             DB.Packages.Add(newPack);
             DB.SaveChanges();
@@ -54,14 +51,8 @@ namespace Panda_Exam.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Pending()
         {
-            var packages = DB.Packages.Where(x => x.Status == Status.Pending).Select(x => new outputPendingDeliveredPackageDto
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Weight = x.Weight,
-                ShippingAddress = x.ShippingAddress,
-                RecipientName = x.User.UserName
-            }).ToArray();
+            var packages = DB.Packages.Where(x => x.Status == Status.Pending).ProjectTo<outputPendingDeliveredPackageDto>(mapper.ConfigurationProvider)
+            .ToArray();
             return View(packages);
         }
 
@@ -79,14 +70,8 @@ namespace Panda_Exam.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Shipped()
         {
-            var packages = DB.Packages.Where(x => x.Status == Status.Shipped).Select(x => new outputShippedPackageDto
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Weight = x.Weight,
-                RecipientName = x.User.UserName,
-                DeliveryDate = x.EstimatedDeliveryDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
-            }).ToArray();
+            var packages = DB.Packages.Where(x => x.Status == Status.Shipped).ProjectTo<outputShippedPackageDto>(mapper.ConfigurationProvider)
+            .ToArray();
             return View(packages);
         }
 
@@ -102,30 +87,16 @@ namespace Panda_Exam.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Delivered()
         {
-            var packages = DB.Packages.Where(x => x.Status == Status.Delivered || x.Status == Status.Acquired).Select(x => new outputPendingDeliveredPackageDto
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Weight = x.Weight,
-                ShippingAddress = x.ShippingAddress,
-                RecipientName = x.User.UserName
-            }).ToArray();
+            var packages = DB.Packages.Where(x => x.Status == Status.Delivered || x.Status == Status.Acquired).ProjectTo<outputPendingDeliveredPackageDto>(mapper.ConfigurationProvider)
+            .ToArray();
             return View(packages);
         }
 
         [Authorize]
         public IActionResult Details(int id)
         {
-            var package = DB.Packages.Where(x => x.Id == id)
-                .Select(x => new outputDetailsPackageDto
-                {
-                    Description = x.Description,
-                    Weight = x.Weight,
-                    Status = x.Status.ToString(),
-                    ShippingAddress = x.ShippingAddress,
-                    RecipientName = x.User.UserName,
-                    DeliveryDate = x.EstimatedDeliveryDate == null ? "N/A" : x.EstimatedDeliveryDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
-                }).FirstOrDefault();
+            var package = mapper.Map<outputDetailsPackageDto>(DB.Packages.Where(x => x.Id == id).Include(x=>x.User).FirstOrDefault());
+
             if (package is null)
             {
                 return View("Error", new ErrorViewModel() { RequestId = $"Package with Id {id} not found!" });
@@ -147,7 +118,7 @@ namespace Panda_Exam.Controllers
             }
             package.Status = Status.Acquired;
             DB.SaveChanges();
-            ReceiptsController.Create(package, DB);
+            ReceiptsController.Create(package, DB,mapper);
             return RedirectToAction("Index", "Home");
         }
     }

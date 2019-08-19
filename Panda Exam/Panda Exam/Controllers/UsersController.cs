@@ -6,7 +6,6 @@
     using Panda_Exam.Data;
     using Panda_Exam.DTOS.Users;
     using Panda_Exam.Models;
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -47,8 +46,6 @@
         {
             if (ModelState.IsValid)
             {
-                //     var foundUser = Db.Users.FirstOrDefault(x => x.UserName == user.UserName);
-
                 var result = await _signManager.PasswordSignInAsync(user.UserName, user.Password, false, false);
 
                 if (!result.Succeeded)
