@@ -1,0 +1,10 @@
+﻿@model outputProductDTO
+<div  class="col-md-2 product p-1 chushka-bg-color rounded-top rounded-bottom mb-5">
+    <a asp-action="Details" asp-controller="Products" asp-route-id="@Model.Id" >
+        <h5 class="text-center mt-3">@Model.Name</h5>
+    </a>
+    <hr class="hr-1 bg-white" />
+    <p class="text-white text-center">@Model.DescriptionShortened </p>
+    <hr class="hr-1 bg-white" />
+    <h6 class="text-center text-white mb-3">$@Model.Price.ToString("F2")</h6>
+</div>

@@ -1,0 +1,45 @@
+﻿@model ICollection<outputProductDTO>
+@{
+    ViewData["Title"] = "Home Page";
+    Queue<outputProductDTO> Products = new Queue<outputProductDTO>(Model);
+}
+<main class="mt-3 mb-5">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="container-fluid text-center">
+            <h2>Greetings, @User.Identity.Name!</h2>
+            <h4>Feel free to view and order any of our products.</h4>
+        </div>
+        <hr class="hr-2 bg-dark" />
+        <div class="container-fluid product-holder">
+            @while (Products.Any())
+            {
+                @if (Products.Count >= 5)
+                {
+                    <div class="row d-flex justify-content-around">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                        <partial name="_ProductInfoPartial" model="Products.Dequeue()" />
+                        }
+                    </div>
+                    continue;
+                }
+                <div class="row d-flex justify-content-around">
+                    @while (Products.Any())
+                    {
+                        <partial name="_ProductInfoPartial" model="Products.Dequeue()" />
+                    }
+                </div>
+            }
+        </div>
+        }
+        else
+        {
+            <div class="jumbotron mt-3 chushka-bg-color">
+                <h1>Welcome to Chushka Universal Web Shop</h1>
+                <hr class="bg-white" />
+                <h3><a class="nav-link-dark" asp-controller="Users" asp-action="Login">Login</a> if you have an account.</h3>
+                <h3><a class="nav-link-dark" asp-controller="Users" asp-action="Register">Register</a> if you don't.</h3>
+            </div>
+        }
+</main>

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>aspnet-ChushkaExam-44FB59F2-FE96-49D4-B201-13B995B33D95</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChushkaExam.Infrastructure.Data\ChushkaExam.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\ChushkaExam.Infrastructure.Models\ChushkaExam.Infrastructure.Models.csproj" />
+  </ItemGroup>
+
+</Project>
