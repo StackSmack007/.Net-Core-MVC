@@ -1,24 +1,23 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Panda_Exam.Data;
-using Panda_Exam.DTOS.Packages;
-using Panda_Exam.Models;
-using Panda_Exam.Models.Enums;
-using System;
-using System.Linq;
-
-namespace Panda_Exam.Controllers
+﻿namespace Panda_Exam.Controllers
 {
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Panda_Exam.Data;
+    using Panda_Exam.DTOS.Packages;
+    using Panda_Exam.Models;
+    using Panda_Exam.Models.Enums;
+    using System;
+    using System.Linq;
 
     public class PackagesController : Controller
     {
-        private System.Random random;
+        private Random random;
         private PandaDbContext DB;
         private IMapper mapper;
-        public PackagesController(System.Random random, PandaDbContext context,IMapper mapper)
+        public PackagesController(System.Random random, PandaDbContext context, IMapper mapper)
         {
             this.random = random;
             DB = context;
@@ -95,7 +94,7 @@ namespace Panda_Exam.Controllers
         [Authorize]
         public IActionResult Details(int id)
         {
-            var package = mapper.Map<outputDetailsPackageDto>(DB.Packages.Where(x => x.Id == id).Include(x=>x.User).FirstOrDefault());
+            var package = mapper.Map<outputDetailsPackageDto>(DB.Packages.Where(x => x.Id == id).Include(x => x.User).FirstOrDefault());
 
             if (package is null)
             {
@@ -118,7 +117,7 @@ namespace Panda_Exam.Controllers
             }
             package.Status = Status.Acquired;
             DB.SaveChanges();
-            ReceiptsController.Create(package, DB,mapper);
+            ReceiptsController.Create(package, DB, mapper);
             return RedirectToAction("Index", "Home");
         }
     }

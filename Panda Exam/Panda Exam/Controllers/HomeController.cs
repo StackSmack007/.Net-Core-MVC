@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Panda_Exam.Data;
 using Panda_Exam.DTOS.Home;
 using Panda_Exam.Models;
+using System;
 using System.Diagnostics;
 using System.Linq;
 
@@ -12,14 +14,20 @@ namespace Panda_Exam.Controllers
     {
         private UserManager<User> userManager;
         private PandaDbContext db;
-        public HomeController(PandaDbContext db,UserManager<User> um)
+      private  IConfiguration cfg;
+      private  IServiceProvider serviceProvider;
+        public HomeController(PandaDbContext db,UserManager<User> um,IConfiguration cfg,IServiceProvider serviceProvider)
         {
             this.db = db;
             userManager = um;
+            this.cfg = cfg;
+            this.serviceProvider = serviceProvider;
         }
 
         public IActionResult Index()
         {
+            var cfg2 = serviceProvider.GetService(typeof(IConfiguration));
+
             if (User.Identity.IsAuthenticated)
             {
                 var user = userManager.GetUserAsync(HttpContext.User).Result.Id;

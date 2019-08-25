@@ -50,7 +50,7 @@
 
                 if (!result.Succeeded)
                 {
-                    return RedirectToAction("Login");
+                    return Login();
                 }
             }
             return RedirectToAction("Index", "Home");

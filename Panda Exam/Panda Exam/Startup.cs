@@ -12,6 +12,7 @@ using Panda_Exam.Data;
 using Panda_Exam.Models;
 using Panda_Exam.Services;
 using System;
+using System.Threading.Tasks;
 
 namespace Panda_Exam
 {
@@ -36,16 +37,9 @@ namespace Panda_Exam
 
             services.AddDbContext<PandaDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<User>()
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<PandaDbContext>()
-                                .AddDefaultUI()
-                                .AddDefaultTokenProviders();
-
-             services.AddScoped<IUserClaimsPrincipalFactory<User>, UserClaimsPrincipalFactory<User, IdentityRole>>();
-            services.AddSingleton<Random>();
-
-            services.Configure<IdentityOptions>(options =>
+            services
+                .AddDefaultIdentity<User>(
+                options =>
                 {
                     // Password settings
                     options.Password.RequireDigit = false;
@@ -53,7 +47,40 @@ namespace Panda_Exam
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequireLowercase = true;
-                });
+                }
+                )
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<PandaDbContext>()
+                                .AddDefaultUI()
+                                .AddDefaultTokenProviders();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<User>, UserClaimsPrincipalFactory<User, IdentityRole>>();
+            services.AddSingleton<Random>();
+
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(
+        options =>
+        {
+            options.LoginPath = new PathString("/Users/Login");
+            options.LogoutPath = new PathString("/Users/Logout");
+            // options.AccessDeniedPath = new PathString("/Home/About");
+
+            options.Events.OnRedirectToLogin = context =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api")
+                    && context.Response.StatusCode == StatusCodes.Status200OK)
+                {
+                    context.Response.Clear();
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                }
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            };
+        }
+    );
+            //---------------
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -61,7 +88,10 @@ namespace Panda_Exam
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,9 +116,26 @@ namespace Panda_Exam
 
             app.UseMvc(routes =>
             {
+
+           //     routes.MapRoute(
+           //    name: "TestRoute",
+           //    template: "/Identity/Account/Login",
+           //    defaults: new { controller = "Home", action = "Index" });
+
+
+
+         //  routes.MapRoute(
+         //         name: "MyRoutes",
+         //         template: "Identity/.*",
+         //         defaults: new { controller = "Home", action = "Index" }
+         //      //   dataTokens:new {controller=""}
+         //        //, constraints:new { area = "MyArea|SpecialArea" }
+         //        );
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
             });
         }
     }
