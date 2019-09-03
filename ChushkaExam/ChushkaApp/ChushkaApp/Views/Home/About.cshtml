@@ -1,7 +1,14 @@
 ﻿@{
+    Layout = "_Layout";
     ViewData["Title"] = "About";
+}
+@section moreOptions{
+    <li><a  asp-controller="Users" asp-action="Login">MyLogin</a></li>
+    <li><a  asp-controller="Home" asp-action="Register">MyRegister</a></li>
 }
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
 
 <p>Use this area to provide additional information.</p>
+
+<h1 asp-color="red">My existing Content</h1>
