@@ -1,0 +1,39 @@
+﻿@model LoginUserDTO
+@{
+    ViewData["Title"] = "Login User";
+}
+
+<center>
+    <div class="w-25">
+        <h2>Login</h2>
+        <hr class="ev-bg hr-th2px" />
+
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="UserName" class="font-weight-bold">Username</label>
+                <input class="form-control" asp-for="UserName" placeholder="Username..." required />
+            </div>
+            <div class="form-group ">
+                <label asp-for="Password" class="font-weight-bold"></label>
+                <input class="form-control" type="password" asp-for="Password" placeholder="Password..." required />
+            </div>
+            <hr class="ev-bg hr-th2px" />
+            <div class="form-group form-check">
+
+                <input class="form-check-input" type="checkbox" asp-for="RememberMe" />
+                <label asp-for="RememberMe" class="form-check-label"> Remember me?</label>
+
+            </div>
+            <hr class="ev-bg hr-th2px" />
+
+            <input type="submit" class="btn-sm ev-bg mb-2" value="Login" />
+
+            <div>
+                <a href="#">Forgot your password?</a>
+            </div>
+            <div>
+                <a asp-controller="Users" asp-action="Register">Register a new User</a>
+            </div>
+        </form>
+    </div>
+</center>
