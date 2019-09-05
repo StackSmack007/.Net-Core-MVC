@@ -9,6 +9,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Linq;
     [Area("Event")]
     public class EventsController : Controller
@@ -32,7 +33,7 @@
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-       // [TypeFilter(typeof(ThrottleFilter), Arguments = new object[] { 10 })]
+        // [TypeFilter(typeof(ThrottleFilter), Arguments = new object[] { 10 })]
         [TypeFilter(typeof(AdminCreateEventFIlter))]
         public IActionResult Create(eventCreateDto dto)
         {
@@ -44,18 +45,18 @@
                 db.SaveChanges();
                 return RedirectToAction(nameof(All));
             }
-            string[] errors = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToArray();
-            foreach (var error in errors)
-            {
-                ModelState.AddModelError("", error);
-            }
-            return View();
+            //  string[] errors = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToArray();
+            //  foreach (var error in errors)
+            //  {
+            //      ModelState.AddModelError("", error);
+            //  }
+            return View(dto);
         }
 
         [Authorize]
         public IActionResult All()
         {
-            eventInfoDtoOutput[] eventDtos = db.Events.ProjectTo<eventInfoDtoOutput>(mapper.ConfigurationProvider).ToArray();
+            eventInfoDtoOutput[] eventDtos = db.Events.OrderByDescending(x => x.TotalTickets).ProjectTo<eventInfoDtoOutput>(mapper.ConfigurationProvider).ToArray();
             return View(eventDtos);
         }
     }

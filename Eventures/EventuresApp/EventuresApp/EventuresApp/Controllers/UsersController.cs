@@ -98,7 +98,7 @@
                 }
                 await _signManager.SignInAsync(user, true);
             }
-            return RedirectToAction("Index", "Home");
+            return View(newUser);
         }
 
         [Authorize]
