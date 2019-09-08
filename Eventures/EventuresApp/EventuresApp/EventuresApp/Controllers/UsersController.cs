@@ -40,7 +40,7 @@
         }
 
         [HttpPost]
-        public IActionResult Login(LoginUserDTO user)
+        public IActionResult Login(LoginUserDto user)
         {
             if (ModelState.IsValid)
             {

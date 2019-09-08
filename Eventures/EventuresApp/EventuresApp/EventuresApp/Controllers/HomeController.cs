@@ -13,6 +13,7 @@ namespace EventuresApp.Controllers
     {
         public IActionResult Index()
         {
+            IExceptionHandlerFeature exceptionDetails = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             return View();
         }
 

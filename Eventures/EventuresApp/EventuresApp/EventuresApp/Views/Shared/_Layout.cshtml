@@ -42,6 +42,7 @@
                                         </a>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                             <a class="dropdown-item" asp-area="Event" asp-controller="Events" asp-action="All">All Events</a>
+                                            <a class="dropdown-item" asp-area="Event" asp-controller="Events" asp-action="MyEvents">My Events</a>
                                             @if (User.IsInRole("Admin"))
                                             {
                                                 <a class="dropdown-item" asp-area="Event" asp-controller="Events" asp-action="Create">Create</a>
@@ -50,6 +51,19 @@
                                     </div>
                                 </div>
                             </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-link">
+                                    <div class="dropdown ">
+                                        <a class=" dropdown-toggle text-dark" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Orders
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                            <a class="dropdown-item" asp-controller="Orders" asp-action="AllOrders">All Orders</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
                         }
                     </ul>
                 </div>

@@ -1,17 +1,16 @@
-﻿using AutoMapper;
-using EventuresApp.Areas.Event.Models;
-using EventuresApp.Models;
-
-
-namespace EventuresApp.Services
+﻿namespace EventuresApp.Services
 {
-    public class MappingProfile:Profile
+    using AutoMapper;
+    using EventuresApp.Areas.Event.Models;
+    using EventuresApp.DTOS.Orders;
+    using EventuresApp.Models;
+    public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-   
             CreateMap<eventCreateDto, Event>();
             CreateMap<Event, eventInfoDtoOutput>();
+            CreateMap<Order, orderDto>();
         }
     }
 }

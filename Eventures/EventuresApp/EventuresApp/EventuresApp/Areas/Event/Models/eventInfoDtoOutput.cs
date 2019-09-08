@@ -1,10 +1,10 @@
 ﻿namespace EventuresApp.Areas.Event.Models
 {
-using System;
-using System.ComponentModel.DataAnnotations;
+    using System;
     public class eventInfoDtoOutput
     {
-      //  [Required, MaxLength(64), MinLength(4)]
+        //  [Required, MaxLength(64), MinLength(4)]
+        public string Id { get; set; }
         public string Name { get; set; }
 
        //[Required(ErrorMessage = "Place must be provided!"), MaxLength(64, ErrorMessage = "Maximum Length of place Name is 64 symbols"), MinLength(4, ErrorMessage = "Minimum Length of place Name is 4 symbols")]

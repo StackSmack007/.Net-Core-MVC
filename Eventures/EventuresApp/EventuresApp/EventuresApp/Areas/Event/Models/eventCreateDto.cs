@@ -6,7 +6,7 @@
     public class eventCreateDto:eventInfoDtoOutput,IValidatableObject
     {
         public int TotalTickets { get; set; }
-        //[Range(typeof(decimal), "0", "79228162514264337593543950335", ErrorMessage = "Ticket price must be positive!")]
+
         public decimal PricePerTicket { get; set; }
 
         private  const string defaultDate = "Fri, 19 Aug 2011 13:45:00 GMT";

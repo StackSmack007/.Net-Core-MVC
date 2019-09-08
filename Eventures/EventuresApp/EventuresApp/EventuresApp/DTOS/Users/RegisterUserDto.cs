@@ -2,7 +2,7 @@
 
 namespace EventuresApp.DTOS.Users
 {
-    public class RegisterUserDto:LoginUserDTO
+    public class RegisterUserDto:LoginUserDto
     {
                      
         [Required]

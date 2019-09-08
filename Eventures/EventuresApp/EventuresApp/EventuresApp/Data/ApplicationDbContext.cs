@@ -5,14 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventuresApp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser,IdentityRole,string>
+    public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
-        {        }
+        { }
 
-     public  DbSet<AppUser> AppUsers { get; set; }
-     public  DbSet<Event> Events { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

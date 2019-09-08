@@ -7,9 +7,9 @@
     using EventuresApp.Models;
     using EventuresApp.Services;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using System;
     using System.Linq;
     [Area("Event")]
     public class EventsController : Controller
@@ -17,12 +17,14 @@
         private readonly IMapper mapper;
         private readonly ApplicationDbContext db;
         private readonly ILogger<EventsController> logger;
+        private readonly UserManager<AppUser> userManager;
 
-        public EventsController(IMapper mapper, ApplicationDbContext db, ILogger<EventsController> logger)
+        public EventsController(IMapper mapper, ApplicationDbContext db, ILogger<EventsController> logger, UserManager<AppUser> userManager)
         {
             this.mapper = mapper;
             this.db = db;
             this.logger = logger;
+            this.userManager = userManager;
         }
 
         [Authorize(Roles = "Admin")]
@@ -33,7 +35,6 @@
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        // [TypeFilter(typeof(ThrottleFilter), Arguments = new object[] { 10 })]
         [TypeFilter(typeof(AdminCreateEventFIlter))]
         public IActionResult Create(eventCreateDto dto)
         {
@@ -45,11 +46,6 @@
                 db.SaveChanges();
                 return RedirectToAction(nameof(All));
             }
-            //  string[] errors = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToArray();
-            //  foreach (var error in errors)
-            //  {
-            //      ModelState.AddModelError("", error);
-            //  }
             return View(dto);
         }
 
@@ -58,6 +54,22 @@
         {
             eventInfoDtoOutput[] eventDtos = db.Events.OrderByDescending(x => x.TotalTickets).ProjectTo<eventInfoDtoOutput>(mapper.ConfigurationProvider).ToArray();
             return View(eventDtos);
+        }
+
+        [Authorize]
+        public IActionResult MyEvents()
+        {
+            string currentUserId = userManager.GetUserId(this.User);
+
+            myEventDto[] myEvents = db.Events.Where(x => x.Orders.Any(o => o.AppUserId == currentUserId))
+               .Select(x => new myEventDto
+               {
+                   Name = x.Name,
+                   Start = x.Start,
+                   End = x.End,
+                   TotalTicketCount = x.Orders.Where(o => o.AppUserId == currentUserId).Sum(o => o.TicketCount)
+               }).OrderByDescending(x=>x.TotalTicketCount).ToArray();
+            return View(myEvents);
         }
     }
 }

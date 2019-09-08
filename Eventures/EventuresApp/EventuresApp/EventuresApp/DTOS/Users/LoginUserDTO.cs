@@ -2,7 +2,7 @@
 
 namespace EventuresApp.DTOS.Users
 {
-    public class LoginUserDTO
+    public class LoginUserDto
     {
         [Required(ErrorMessage = "You must give username!")]
         public string UserName { get; set; }
