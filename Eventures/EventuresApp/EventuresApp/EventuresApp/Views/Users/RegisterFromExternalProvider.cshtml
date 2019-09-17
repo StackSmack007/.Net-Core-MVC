@@ -1,11 +1,11 @@
 ﻿@model RegisterUserDto
-@{ 
+@{
     ViewData["Title"] = "Register User";
 }
-    <center>
-<div class="w-50">
-        <h2>Register</h2>
-        <hr class="ev-bg hr-th2px"/>
+<center>
+    <div class="w-50">
+        <h2>Complete Registering with @TempData.Peek("Provider") data taken already.</h2>
+        <hr class="ev-bg hr-th2px" />
 
         <form method="post">
             <div class="form-row justify-content-between">
@@ -54,4 +54,4 @@
             <input type="submit" class="btn-lg ev-bg" value="Register" />
         </form>
     </div>
-    </center>
+</center>

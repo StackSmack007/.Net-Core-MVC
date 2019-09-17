@@ -52,7 +52,8 @@
         [Authorize]
         public IActionResult All()
         {
-            eventInfoDtoOutput[] eventDtos = db.Events.OrderByDescending(x => x.TotalTickets).ProjectTo<eventInfoDtoOutput>(mapper.ConfigurationProvider).ToArray();
+            eventInfoDtoOutput[] eventDtos = db.Events.Where(x => x.TotalTickets > 0)
+                .OrderByDescending(x => x.TotalTickets).ProjectTo<eventInfoDtoOutput>(mapper.ConfigurationProvider).ToArray();
             return View(eventDtos);
         }
 

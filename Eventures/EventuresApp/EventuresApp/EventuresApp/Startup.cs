@@ -3,6 +3,7 @@ using EventuresApp.Data;
 using EventuresApp.Models;
 using EventuresApp.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -70,9 +71,34 @@ namespace EventuresApp
             services.AddSingleton(mapper);
             services.AddSingleton<CustomMiddleware>();
 
+            services.AddAuthentication().AddFacebook(opt =>
+            {
+                opt.AppId = Configuration["FBConfiguration:AppId"];
+                opt.AppSecret = Configuration["FBConfiguration:AppSecret"];
+            });
+
+          services.AddHttpsRedirection(options =>
+          {
+              options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+              options.HttpsPort = 5001;
+          });
+
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(60);
+            });
+            services.AddDistributedMemoryCache();
+            services.AddSession(opt=> 
+            {
+                opt.IdleTimeout = TimeSpan.FromSeconds(20);
+                opt.Cookie.HttpOnly=true;
+            });
+
             services.AddMvc(opt =>
             {
-                //   opt.Filters.Add<ValidateAntiForgeryTokenAttribute>();
+                //  opt.Filters.Add<ValidateAntiForgeryTokenAttribute>();
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -82,12 +108,13 @@ namespace EventuresApp
         {
             //  app.UseMiddleware<MyExceptionHandler>();
 
-          //  app.UseExceptionHandler("/Home/MyException");
+           app.UseExceptionHandler("/Home/MyException");
            if (env.IsDevelopment())
            {
                app.UseDeveloperExceptionPage();
                app.UseDatabaseErrorPage();
-           }
+               app.UseHsts();
+            }
            else
            {
                app.UseExceptionHandler("/Home/Error");
@@ -97,11 +124,18 @@ namespace EventuresApp
            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+
+            app.UseCookiePolicy(new CookiePolicyOptions()
+            {
+                HttpOnly = HttpOnlyPolicy.Always,
+                Secure = CookieSecurePolicy.Always,
+                MinimumSameSitePolicy = SameSiteMode.Strict
+            });
 
             app.UseAuthentication();
+            app.UseSession();
 
-            app.UseMiddleware<CustomMiddleware>();
+            //  app.UseMiddleware<CustomMiddleware>();
 
             app.UseMvc(routes =>
             {

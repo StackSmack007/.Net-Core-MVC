@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using EventuresApp.Models;
 using Microsoft.AspNetCore.Diagnostics;
+using System.Text;
+using EventuresApp.DTOS.Users;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace EventuresApp.Controllers
 {
@@ -13,12 +17,18 @@ namespace EventuresApp.Controllers
     {
         public IActionResult Index()
         {
+         // LoginUserDto tester = new LoginUserDto { UserName = "asparuh", Password = "alabala" };
+         // var test = JsonConvert.SerializeObject(tester);
+         // HttpContext.Session.SetString("UserSessionData", test);      
             IExceptionHandlerFeature exceptionDetails = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             return View();
         }
 
         public IActionResult Privacy()
         {
+          // string resFromSession = HttpContext.Session.GetString("UserSessionData");
+          // LoginUserDto test = JsonConvert.DeserializeObject<LoginUserDto>(resFromSession);
+
             return View();
         }
 

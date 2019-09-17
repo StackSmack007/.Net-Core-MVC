@@ -1,6 +1,7 @@
 ﻿@model LoginUserDto
 @{
     ViewData["Title"] = "Login User";
+    var providers = (Microsoft.AspNetCore.Authentication.AuthenticationScheme[])ViewData["ExternalLoginProviders"];
 }
 
 <center>
@@ -27,13 +28,26 @@
             <hr class="ev-bg hr-th2px" />
 
             <input type="submit" class="btn-sm ev-bg mb-2" value="Login" />
-
-            <div>
-                <a href="#">Forgot your password?</a>
-            </div>
-            <div>
-                <a asp-controller="Users" asp-action="Register">Register a new User</a>
-            </div>
         </form>
+        <div>
+            <a href="#">Forgot your password?</a>
+        </div>
+        <div>
+            <a asp-controller="Users" asp-action="Register">Register a new User</a>
+        </div>
+
+        @if (providers.Any())
+        {
+            <hr class="ev-bg hr-th2px" />
+            @*<form asp-area="Identity" asp-page="/Account/ExternalLogin" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">*@
+            <form asp-controller="Users" asp-action="ExternalLogin" method="post">
+                @foreach (var provider in providers)
+                {
+                    <input type="hidden" name="provider" value="@provider.Name" />
+                    <button type="submit" class="btn-sm ev-bg">@provider.DisplayName</button>
+                }
+            </form>
+            <hr class="ev-bg hr-th2px" />
+        }
     </div>
 </center>
