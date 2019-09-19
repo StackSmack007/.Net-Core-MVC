@@ -1,0 +1,19 @@
+﻿@model Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature
+
+@{
+    ViewData["Title"] = "MyException";
+}
+
+<div>
+    <h1>Error! Brutal Fatal!</h1>
+    <h2 class="text-danger">Error Message: @Model.Error.Message</h2>
+    <hr /><br />
+
+    <h1>Coused by:</h1>
+    <h2 class="text-danger">Action: @Model.Error.TargetSite.Name</h2>
+    <h2 class="text-danger">Cotroller: @Model.Error.TargetSite.ReflectedType.Name</h2>
+    <hr /><br />
+
+    <h1>StackTrace:</h1>
+    <h2 class="text-danger">@Model.Error.StackTrace</h2>
+</div>

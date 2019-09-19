@@ -1,0 +1,53 @@
+﻿@model LoginUserDto
+@{
+    ViewData["Title"] = "Login User";
+    var providers = (Microsoft.AspNetCore.Authentication.AuthenticationScheme[])ViewData["ExternalLoginProviders"];
+}
+
+<center>
+    <div class="w-25">
+        <h2>Login</h2>
+        <hr class="ev-bg hr-th2px" />
+
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="UserName" class="font-weight-bold">Username</label>
+                <input class="form-control" asp-for="UserName" placeholder="Username..." required />
+            </div>
+            <div class="form-group ">
+                <label asp-for="Password" class="font-weight-bold"></label>
+                <input class="form-control" type="password" asp-for="Password" placeholder="Password..." required />
+            </div>
+            <hr class="ev-bg hr-th2px" />
+            <div class="form-group form-check">
+
+                <input class="form-check-input" type="checkbox" asp-for="RememberMe" />
+                <label asp-for="RememberMe" class="form-check-label"> Remember me?</label>
+
+            </div>
+            <hr class="ev-bg hr-th2px" />
+
+            <input type="submit" class="btn-sm ev-bg mb-2" value="Login" />
+        </form>
+        <div>
+            <a href="#">Forgot your password?</a>
+        </div>
+        <div>
+            <a asp-controller="Users" asp-action="Register">Register a new User</a>
+        </div>
+
+        @if (providers.Any())
+        {
+            <hr class="ev-bg hr-th2px" />
+            @*<form asp-area="Identity" asp-page="/Account/ExternalLogin" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">*@
+            <form asp-controller="Users" asp-action="ExternalLogin" method="post">
+                @foreach (var provider in providers)
+                {
+                    <input type="hidden" name="provider" value="@provider.Name" />
+                    <button type="submit" class="btn-sm ev-bg">@provider.DisplayName</button>
+                }
+            </form>
+            <hr class="ev-bg hr-th2px" />
+        }
+    </div>
+</center>
