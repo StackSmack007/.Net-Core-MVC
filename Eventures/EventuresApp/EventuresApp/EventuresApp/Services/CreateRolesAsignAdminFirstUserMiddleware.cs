@@ -6,11 +6,11 @@
     using System.Linq;
     using Microsoft.AspNetCore.Identity;
     using EventuresApp.Models;
-    public class CustomMiddleware
+    public class CreateRolesAsignAdminFirstUserMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public CustomMiddleware(RequestDelegate next)
+        public CreateRolesAsignAdminFirstUserMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -23,7 +23,7 @@
                 await roleManager.CreateAsync(new IdentityRole("User"));
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
-            httpContext.Response.Headers.Add("testing", "mesting");
+            //httpContext.Response.Headers.Add("testing", "mesting");
             await _next(httpContext);
             if (httpContext.User.Identity.IsAuthenticated)
             {

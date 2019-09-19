@@ -20,7 +20,7 @@ namespace EventuresApp.Controllers
          // LoginUserDto tester = new LoginUserDto { UserName = "asparuh", Password = "alabala" };
          // var test = JsonConvert.SerializeObject(tester);
          // HttpContext.Session.SetString("UserSessionData", test);      
-            IExceptionHandlerFeature exceptionDetails = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+         //   IExceptionHandlerFeature exceptionDetails = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             return View();
         }
 

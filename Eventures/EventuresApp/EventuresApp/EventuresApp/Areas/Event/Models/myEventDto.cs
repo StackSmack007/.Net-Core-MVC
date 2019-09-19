@@ -1,6 +1,7 @@
 ﻿namespace EventuresApp.Areas.Event.Models
 {
     using System;
+    
     public class myEventDto
     {
         public string Name { get; set; }

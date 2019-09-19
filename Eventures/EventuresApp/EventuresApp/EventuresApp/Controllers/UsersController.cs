@@ -1,6 +1,7 @@
 ﻿namespace EventuresApp.Controllers
 {
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using EventuresApp.Data;
     using EventuresApp.DTOS.Users;
     using EventuresApp.Models;
@@ -16,6 +17,60 @@
         private UserManager<AppUser> _userManager;
         private readonly IMapper mapper;
         private ApplicationDbContext Db;
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdministrateUsers()
+        {
+            string adminRoleId = Db.Roles.FirstOrDefault(x => x.Name == "Admin").Id;
+            string[] adminIds = Db.UserRoles.Where(x => x.RoleId == adminRoleId).Select(x => x.UserId).ToArray();
+            var currentUser = await _userManager.GetUserAsync(this.User);
+            var users = _userManager.Users.Where(x => x != currentUser).ProjectTo<RoleUserDTO>(mapper.ConfigurationProvider).ToArray();
+            for (int i = 0; i < users.Length; i++)
+            {
+                var user = users[i];
+                if (adminIds.Contains(user.Id))
+                {
+                    user.Role = "Admin";
+                    continue;
+                }
+                user.Role = "User";
+            }
+            return this.View(users);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> AdministrateUsers(UserManipulationDTO dto)
+        {
+            var targetUser = Db.Users.FirstOrDefault(x => x.Id == dto.Id);
+            bool isAdmin = await _userManager.IsInRoleAsync(targetUser, "Admin");
+            switch (dto.Operation)
+            {
+                case Operation.Promote:
+                    {
+                        if (isAdmin)
+                        {
+                            TempData["Error"] = $"User {targetUser.UserName} is already Promoted";
+                            break;
+                        }
+                        TempData["Success"] = $"User {targetUser.UserName} is Promoted to Admin";
+                        await _userManager.AddToRoleAsync(targetUser, "Admin");
+                    }
+                    break;
+                case Operation.Demote:
+                    {
+                        if (!isAdmin)
+                        {
+                            TempData["Error"] = $"User {targetUser.UserName} is already Demoted";
+                            break;
+                        }
+                        TempData["Success"] = $"User {targetUser.UserName} is Demoted to User";
+                        await _userManager.RemoveFromRoleAsync(targetUser, "Admin");
+                    }
+                    break;
+            }
+            return RedirectToAction("AdministrateUsers");
+        }
 
         public UsersController(ApplicationDbContext db, SignInManager<AppUser> sign, UserManager<AppUser> userManager, IMapper mapper)
         {
@@ -178,6 +233,7 @@
                     return View();
                 }
                 await _signInManager.SignInAsync(user, true);
+                return RedirectToAction("Index", "Home");
             }
             return View(newUser);
         }

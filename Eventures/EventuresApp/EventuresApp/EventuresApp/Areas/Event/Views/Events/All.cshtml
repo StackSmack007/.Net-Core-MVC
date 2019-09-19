@@ -1,7 +1,9 @@
-﻿@model EventuresApp.Areas.Event.Models.eventInfoDtoOutput[]
+﻿@model IEnumerable<EventuresApp.Areas.Event.Models.eventInfoDtoOutput>
 
 @{
     ViewData["Title"] = "All Events";
+    int i = 0;
+
 }
 <center>
     <div>
@@ -18,28 +20,32 @@
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.Length; i++)
-                {
+               @foreach (var evnt in Model)
+               {
                     <tr>
-                        <th scope="row">@(i + 1)</th>
-                        <td>@Model[i].Name</td>
-                        <td>@Model[i].Start.ToString("dd MMM yyyy hh:mm:ss", CultureInfo.InvariantCulture)</td>
-                        <td>@Model[i].End.ToString("dd MMM yyyy hh:mm:ss", CultureInfo.InvariantCulture)</td>
+                        <th scope="row">@(i++)</th>
+                        <td>@evnt.Name</td>
+                        <td>@evnt.Start.ToString("dd MMM yyyy hh:mm:ss", CultureInfo.InvariantCulture)</td>
+                        <td>@evnt.End.ToString("dd MMM yyyy hh:mm:ss", CultureInfo.InvariantCulture)</td>
                         <td>
                             <form class="form-inline" method="post" asp-area="" asp-controller="Orders" asp-action="Order">
                                 <div class="form-group">
                                     <label for="tickets" class="font-weight-bold mr-3">Tickets</label>
                                     <input type="number" class="form-control w-50 mr-3" id="tickets" name="TicketsCount" step="1" placeholder="Number..." min="1" required>
-                                    <input type="hidden" name="EventId" value="@Model[i].Id">
-                                    <input type="hidden" name="EventName" value="@Model[i].Name">
+                                    <input type="hidden" name="EventId" value="@evnt.Id">
+                                    <input type="hidden" name="EventName" value="@evnt.Name">
                                     <button type="submit" class="btn ev-bg">Order</button>
                                 </div>
                             </form>
                         </td>
                     </tr>
                 }
+
             </tbody>
         </table>
+        <div id="paginator">
+                @Html.PagedListPager((IPagedList)Model, p => Url.Action("All","Events",  new { pageNumber = p, foo = "bar" }))
+         </div>
 
         @if (TempData.ContainsKey("Purchase"))
         {

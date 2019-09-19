@@ -19,6 +19,7 @@
             CreateMap<Event, eventInfoDtoOutput>();
             CreateMap<Order, orderDto>();
             CreateMap<RegisterUserDto, AppUser>();
+            CreateMap<AppUser, RoleUserDTO>();
         }
 
         private void CreateMapToMappings()

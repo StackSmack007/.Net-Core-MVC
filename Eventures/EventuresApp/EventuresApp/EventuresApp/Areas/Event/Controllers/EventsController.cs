@@ -11,6 +11,8 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using System.Linq;
+    using X.PagedList;
+
     [Area("Event")]
     public class EventsController : Controller
     {
@@ -50,11 +52,13 @@
         }
 
         [Authorize]
-        public IActionResult All()
+        public IActionResult All( int? pageNumber, string foo)
         {
-            eventInfoDtoOutput[] eventDtos = db.Events.Where(x => x.TotalTickets > 0)
-                .OrderByDescending(x => x.TotalTickets).ProjectTo<eventInfoDtoOutput>(mapper.ConfigurationProvider).ToArray();
-            return View(eventDtos);
+            var eventDtos = db.Events.Where(x => x.TotalTickets > 0)
+                .OrderByDescending(x => x.TotalTickets).ProjectTo<eventInfoDtoOutput>(mapper.ConfigurationProvider);
+      
+            var portionOfEvents = eventDtos.ToPagedList(pageNumber ?? 1, 1);
+            return View(portionOfEvents);
         }
 
         [Authorize]

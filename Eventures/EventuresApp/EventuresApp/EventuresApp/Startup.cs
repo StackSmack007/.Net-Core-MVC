@@ -69,7 +69,7 @@ namespace EventuresApp
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
-            services.AddSingleton<CustomMiddleware>();
+            services.AddSingleton<CreateRolesAsignAdminFirstUserMiddleware>();
 
             services.AddAuthentication().AddFacebook(opt =>
             {
@@ -135,7 +135,7 @@ namespace EventuresApp
             app.UseAuthentication();
             app.UseSession();
 
-            //  app.UseMiddleware<CustomMiddleware>();
+             app.UseMiddleware<CreateRolesAsignAdminFirstUserMiddleware>();
 
             app.UseMvc(routes =>
             {

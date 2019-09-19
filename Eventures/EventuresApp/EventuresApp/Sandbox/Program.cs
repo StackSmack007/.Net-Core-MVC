@@ -2,14 +2,11 @@
 {
     using AngleSharp.Html.Dom;
     using AngleSharp.Html.Parser;
-    using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
-    using System.Net.Http;
     using System.Text;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
     public class Program
