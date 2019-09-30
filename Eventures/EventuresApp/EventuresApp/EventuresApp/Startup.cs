@@ -2,6 +2,7 @@
 using EventuresApp.Data;
 using EventuresApp.Models;
 using EventuresApp.Services;
+using EventuresApp.Services.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
@@ -101,6 +102,10 @@ namespace EventuresApp
                 //  opt.Filters.Add<ValidateAntiForgeryTokenAttribute>();
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
+            services.AddScoped<IEventsService, EventsService>();
+            services.AddScoped<IOrdersService, OrdersService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

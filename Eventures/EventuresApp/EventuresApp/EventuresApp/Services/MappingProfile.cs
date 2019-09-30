@@ -17,7 +17,7 @@
             CreateMapToMappings();
             CreateMapFromMappings();
             CreateMap<Event, eventInfoDtoOutput>();
-            CreateMap<Order, orderDto>();
+            CreateMap<Order, OrderDto>();
             CreateMap<RegisterUserDto, AppUser>();
             CreateMap<AppUser, RoleUserDTO>();
         }

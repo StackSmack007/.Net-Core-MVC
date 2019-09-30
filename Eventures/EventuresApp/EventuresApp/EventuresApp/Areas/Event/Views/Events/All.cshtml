@@ -29,11 +29,11 @@
                         <td>@evnt.End.ToString("dd MMM yyyy hh:mm:ss", CultureInfo.InvariantCulture)</td>
                         <td>
                             <form class="form-inline" method="post" asp-area="" asp-controller="Orders" asp-action="Order">
-                                <div class="form-group">
-                                    <label for="tickets" class="font-weight-bold mr-3">Tickets</label>
-                                    <input type="number" class="form-control w-50 mr-3" id="tickets" name="TicketsCount" step="1" placeholder="Number..." min="1" required>
+                                <div class=" form-group container-fluid">
                                     <input type="hidden" name="EventId" value="@evnt.Id">
                                     <input type="hidden" name="EventName" value="@evnt.Name">
+                                    <label for="tickets@(i)" class="font-weight-bold mr-3">Tickets</label>
+                                    <input type="number" class="form-control w-50 mr-3" id="tickets@(i)" name="TicketsCount" step="1" placeholder="Number..." min="1" max="2147483647" required>
                                     <button type="submit" class="btn ev-bg">Order</button>
                                 </div>
                             </form>
@@ -44,7 +44,12 @@
             </tbody>
         </table>
         <div id="paginator">
-                @Html.PagedListPager((IPagedList)Model, p => Url.Action("All","Events",  new { pageNumber = p, foo = "bar" }))
+                @Html.PagedListPager((IPagedList)Model, p => Url.Action("All","Events",  new { pageNumber = p}),
+               new  X.PagedList.Mvc.Core.Common.PagedListRenderOptions
+         {
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" }
+         })
          </div>
 
         @if (TempData.ContainsKey("Purchase"))

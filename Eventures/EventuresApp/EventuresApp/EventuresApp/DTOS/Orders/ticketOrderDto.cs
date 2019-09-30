@@ -1,6 +1,6 @@
 ﻿namespace EventuresApp.DTOS.Orders
 {
-    public class ticketOrderDto
+    public class TicketOrderDto
     {
         public string EventName { get; set; }
         public string EventId { get; set; }

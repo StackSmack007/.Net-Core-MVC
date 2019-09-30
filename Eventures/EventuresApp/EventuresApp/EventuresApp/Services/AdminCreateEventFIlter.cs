@@ -19,7 +19,6 @@
         {
             eventCreateDto eventDTO = (eventCreateDto)context.ActionArguments["dto"];
             logger.LogCritical($"{DateTime.UtcNow.ToString("R")} Administrator {context.HttpContext.User.Identity.Name} create event {eventDTO.Name} ({eventDTO.Start.ToString("R")}/{eventDTO.End.ToString("R")})");
-
         }
     }
 }
